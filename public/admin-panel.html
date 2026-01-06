@@ -187,6 +187,66 @@
                 document.getElementById(subtabId).style.display = 'block';
             });
         });
+
+          // ADMIN PANEL ACCESS CONTROL
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log("=== ADMIN PANEL LOADING ===");
+        
+        // Wait for Firebase to initialize
+        setTimeout(async () => {
+            if (!auth || typeof auth === 'undefined') {
+                console.error("Firebase auth not loaded!");
+                return;
+            }
+            
+            // Check auth state
+            auth.onAuthStateChanged(async (user) => {
+                console.log("Auth State Changed - User:", user ? "Yes" : "No");
+                
+                if (!user) {
+                    console.log("No user found, redirecting to login");
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                console.log("User found, checking admin...");
+                console.log("User UID:", user.uid);
+                console.log("ADMIN_USERS:", ADMIN_USERS);
+                
+                // Check if admin
+                const isAdmin = await checkIfAdmin(user.uid);
+                console.log("Is Admin?", isAdmin);
+                
+                if (!isAdmin) {
+                    alert("❌ Access Denied! Admin only.");
+                    console.log("Not admin, redirecting to home");
+                    window.location.href = '/';
+                    return;
+                }
+                
+                console.log("✅ Admin access granted!");
+                // Show admin panel content
+                document.body.style.display = 'block';
+            });
+            
+            // Force check current user
+            const user = auth.currentUser;
+            if (user) {
+                console.log("Current user on load:", user.email);
+                const isAdmin = await checkIfAdmin(user.uid);
+                console.log("Current user is admin?", isAdmin);
+                
+                if (!isAdmin) {
+                    alert("You are not an admin!");
+                    window.location.href = '/';
+                }
+            } else {
+                console.log("No current user, redirecting...");
+                window.location.href = 'login.html';
+            }
+            
+        }, 500); // Wait 500ms for Firebase to load
+    });
     </script>
 </body>
 </html>
