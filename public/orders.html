@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Purchases | CashWave</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .purchases-container { padding: 100px 20px 50px; max-width: 1200px; margin: 0 auto; }
+        .page-title { text-align: center; margin-bottom: 3rem; }
+        .purchases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        .purchase-card { background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; }
+        .purchase-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .purchase-title { font-size: 1.3rem; font-weight: 600; color: #1f2937; }
+        .purchase-date { color: #6b7280; font-size: 0.9rem; }
+        .purchase-price { color: #3b82f6; font-weight: 600; font-size: 1.2rem; }
+        .download-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: #10b981; color: white; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 1rem; transition: all 0.3s; }
+        .download-btn:hover { background: #059669; transform: translateY(-2px); }
+        .no-purchases { text-align: center; padding: 4rem; color: #6b7280; }
+        .no-purchases i { font-size: 4rem; margin-bottom: 1rem; color: #d1d5db; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo"><i class="fas fa-wave-square"></i> Cash<span>Wave</span></a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="#products">Products</a>
+                <a href="orders.html" class="active">My Purchases</a>
+                <div class="auth-links" id="authLinks" style="display: none;">
+                    <a href="#" id="profileLink"><i class="fas fa-user"></i><span id="userName"></span></a>
+                    <a href="#" id="logoutBtn">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="purchases-container">
+        <div class="page-title">
+            <h1><i class="fas fa-download"></i> My Purchased Products</h1>
+            <p>Download your purchased digital products</p>
+        </div>
+        <div id="purchasesList" class="purchases-grid">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading your purchases...</div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    
+    <script>
+        async function loadPurchasedProducts() {
+            const user = auth.currentUser;
+            if (!user) { window.location.href = 'login.html'; return; }
+            try {
+                const purchasedProducts = await getUserPurchasedProducts(user.uid);
+                const purchasesList = document.getElementById('purchasesList');
+                if (purchasedProducts.length === 0) {
+                    purchasesList.innerHTML = `<div class="no-purchases"><i class="fas fa-box-open"></i><h3>No purchases yet</h3><p>Purchase some products to see them here</p><a href="/" class="btn btn-primary" style="margin-top: 1rem;"><i class="fas fa-shopping-cart"></i> Browse Products</a></div>`;
+                    return;
+                }
+                let html = '';
+                purchasedProducts.forEach(product => {
+                    const date = product.purchasedAt ? product.purchasedAt.toDate().toLocaleDateString() : 'Recently';
+                    html += `<div class="purchase-card"><div class="purchase-header"><h3 class="purchase-title">${product.title}</h3><span class="purchase-price">$${product.price.toFixed(2)}</span></div><div class="purchase-details"><p>Purchased: ${date}</p><p>Quantity: ${product.quantity || 1}</p></div><a href="${product.downloadLink}" class="download-btn" target="_blank"><i class="fas fa-download"></i> Download Now</a></div>`;
+                });
+                purchasesList.innerHTML = html;
+            } catch (error) {
+                console.error('Load purchases error:', error);
+                document.getElementById('purchasesList').innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><h3>Error loading purchases</h3><p>Please try again later</p></div>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPurchasedProducts();
+            auth.onAuthStateChanged((user) => { if (!user) window.location.href = 'login.html'; else loadPurchasedProducts(); });
+        });
+    </script>
+</body>
+</html>

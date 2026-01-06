@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | CashWave</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .whatsapp-note { background: #25D366; color: white; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; text-align: center; }
+        .whatsapp-note i { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-box">
+            <h1><i class="fas fa-user-plus"></i> Create Account</h1>
+            <div class="whatsapp-note"><i class="fab fa-whatsapp"></i><p>Please provide your WhatsApp number for order confirmation and support</p></div>
+            <form id="registerForm">
+                <div class="form-row">
+                    <div class="form-group"><label for="firstName">First Name *</label><input type="text" id="firstName" required></div>
+                    <div class="form-group"><label for="lastName">Last Name *</label><input type="text" id="lastName" required></div>
+                </div>
+                <div class="form-group">
+                    <label for="whatsapp">WhatsApp Number *</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <select id="countryCode" style="width: 80px;">
+                            <option value="+880">+880 (BD)</option><option value="+1">+1 (US)</option><option value="+91">+91 (IN)</option><option value="+44">+44 (UK)</option>
+                        </select>
+                        <input type="tel" id="whatsapp" placeholder="1XXXXXXXXX" required style="flex: 1;">
+                    </div>
+                    <small style="color: #6b7280; font-size: 0.85rem;">We'll send order confirmation via WhatsApp</small>
+                </div>
+                <div class="form-group"><label for="email">Email Address *</label><input type="email" id="email" required></div>
+                <div class="form-group"><label for="password">Password *</label><input type="password" id="password" minlength="6" required><small style="color: #6b7280; font-size: 0.85rem;">Minimum 6 characters</small></div>
+                <div class="form-group"><label for="confirmPassword">Confirm Password *</label><input type="password" id="confirmPassword" required></div>
+                <button type="submit" class="submit-btn"><i class="fas fa-user-plus"></i> Create Account</button>
+            </form>
+            <div class="form-links">
+                <p>Already have an account? <a href="login.html">Login here</a></p>
+                <p><a href="/"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const countryCode = document.getElementById('countryCode').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) { alert('Passwords do not match!'); return; }
+            if (password.length < 6) { alert('Password must be at least 6 characters!'); return; }
+            if (!whatsapp.match(/^\d+$/)) { alert('Please enter valid WhatsApp number (digits only)'); return; }
+            
+            const fullWhatsapp = countryCode + whatsapp;
+            const result = await registerUser(email, password, firstName, lastName, fullWhatsapp);
+            
+            if (result.success) { alert('Registration successful! Welcome to CashWave.'); window.location.href = '/'; }
+            else alert('Registration failed: ' + result.error);
+        });
+    </script>
+</body>
+</html>

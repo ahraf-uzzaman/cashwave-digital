@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashWave | Premium Digital Products</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo"><i class="fas fa-wave-square"></i> Cash<span>Wave</span></a>
+            <div class="nav-links">
+                <a href="#products">Products</a>
+                <a href="#categories">Categories</a>
+                <a href="#bundles">Bundles</a>
+                <a href="#" class="cart-btn" id="cartBtn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <div class="auth-links" id="authLinks" style="display: none;">
+                    <a href="#" id="profileLink">
+                        <i class="fas fa-user"></i>
+                        <span id="userName"></span>
+                    </a>
+                    <a href="#" id="logoutBtn">Logout</a>
+                </div>
+                <div class="guest-links" id="guestLinks">
+                    <a href="login.html" class="login-btn">Login</a>
+                    <a href="register.html" class="register-btn">Sign Up</a>
+                </div>
+                <a href="admin-panel.html" class="admin-nav-link" id="adminNavLink" style="display: none;">
+                    <i class="fas fa-crown"></i> Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Premium Digital Products for Creators</h1>
+            <p>Discover high-quality e-books, templates, courses, and editing packs designed to elevate your creative projects.</p>
+            <div class="hero-buttons">
+                <a href="#products" class="btn btn-primary"><i class="fas fa-rocket"></i> Explore Products</a>
+                <a href="#trending" class="btn btn-secondary"><i class="fas fa-fire"></i> Trending Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="products container" id="products">
+        <div class="section-header">
+            <h2>Our Most Popular Digital Products</h2>
+            <p>Hand-picked digital assets to boost your creativity</p>
+        </div>
+        
+        <div class="categories" id="categories">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="ebook">E-Books</button>
+            <button class="category-btn" data-category="template">Templates</button>
+            <button class="category-btn" data-category="course">Courses</button>
+            <button class="category-btn" data-category="pack">Editing Packs</button>
+        </div>
+        
+        <div class="product-grid" id="productGrid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading products...
+            </div>
+        </div>
+    </section>
+
+    <a href="https://wa.me/8801705261186?text=Hello%20CashWave%2C%20I%20need%20help" 
+       class="whatsapp-float" 
+       target="_blank"
+       id="whatsappBtn">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+            <button class="close-cart"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="btn btn-checkout" id="checkoutBtn">
+                <i class="fas fa-lock"></i> Proceed to Checkout
+            </button>
+            <p class="cart-note">
+                <i class="fas fa-info-circle"></i> After payment, download links will be available in "My Purchases"
+            </p>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-wave-square"></i> CashWave</h3>
+                    <p>Premium digital products for creators worldwide.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#products">Products</a>
+                    <a href="login.html">Login</a>
+                    <a href="register.html">Register</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="#" id="whatsappSupport"><i class="fab fa-whatsapp"></i> WhatsApp Support</a>
+                    <a href="mailto:adnan2092020@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear"></span> CashWave. All rights reserved.</p>
+                <p class="made-with">Made with <i class="fas fa-heart"></i> for creators</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="products.js"></script>
+    <script src="cart.js"></script>
+    <script src="whatsapp.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            loadProducts();
+            updateCartUI();
+            checkAuthState();
+        });
+    </script>
+</body>
+</html>
