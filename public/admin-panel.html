@@ -247,6 +247,31 @@
             
         }, 500); // Wait 500ms for Firebase to load
     });
+
+    // Ensure Firebase is loaded before admin.js runs
+    window.addEventListener('load', function() {
+        console.log("Page fully loaded, checking Firebase...");
+        
+        // Check if Firebase auth is loaded
+        if (typeof auth === 'undefined' || !auth) {
+            console.error("Firebase not loaded! Reloading...");
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            console.log("Firebase loaded successfully");
+            
+            // Force auth state check
+            auth.onAuthStateChanged((user) => {
+                console.log("Auth state in admin panel:", user ? "Logged in" : "Logged out");
+                
+                if (!user) {
+                    console.log("No user, redirecting...");
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    });
     </script>
 </body>
 </html>
