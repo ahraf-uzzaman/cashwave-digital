@@ -1,5 +1,5 @@
 const ADMIN_USERS = [
-    "XJnXbKNEgDTYhAmubt4r3E7AGvm2"
+    "QtAYicVoOaVYjpmtdVHv9prMvNo1"
 ];
 
 async function registerUser(email, password, firstName, lastName, whatsapp) {
